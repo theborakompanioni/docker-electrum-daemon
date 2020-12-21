@@ -7,7 +7,7 @@
 
 [Electrum client](https://electrum.org/) is light bitcoin wallet software operates through supernodes (Electrum server instances actually).
 
-Don't confuse with [Electrum server](https://github.com/spesmilo/electrum-server) that use bitcoind and full blockchain data.
+Don't confuse this with server implementations (like [ElectrumX](https://github.com/spesmilo/electrumx)) that use bitcoind and full blockchain data.
 
 Star this project on Docker Hub :star2: https://hub.docker.com/r/osminogin/electrum-daemon/
 
@@ -72,8 +72,8 @@ Always link electrum daemon to containers or bind to localhost directly and not 
 
 ## API
 
-* [Electrum protocol specs](http://docs.electrum.org/en/latest/protocol.html)
-* [API related sources](https://github.com/spesmilo/electrum/blob/master/lib/commands.py)
+* [Electrum protocol specs](https://electrumx.readthedocs.io/en/latest/protocol.html)
+* [API related sources](https://github.com/spesmilo/electrum/blob/master/electrum/commands.py)
 
 ## License
 
