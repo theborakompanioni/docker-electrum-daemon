@@ -40,7 +40,11 @@ LABEL org.label-schema.build-date=$BUILD_DATE
 
 RUN mkdir -p ${ELECTRUM_HOME}/.electrum/ /data && \
 	ln -sf ${ELECTRUM_HOME}/.electrum/ /data && \
-	chown ${ELECTRUM_USER} ${ELECTRUM_HOME}/.electrum /data
+	mkdir -p ${ELECTRUM_HOME}/.electrum/wallets/ && \
+	mkdir -p ${ELECTRUM_HOME}/.electrum/testnet/wallets/ && \
+	mkdir -p ${ELECTRUM_HOME}/.electrum/regtest/wallets/ && \
+	mkdir -p ${ELECTRUM_HOME}/.electrum/simnet/wallets/ && \
+	chown -R ${ELECTRUM_USER} ${ELECTRUM_HOME}/.electrum /data
 
 USER $ELECTRUM_USER
 WORKDIR $ELECTRUM_HOME
