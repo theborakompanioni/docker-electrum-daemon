@@ -25,8 +25,7 @@ ENV ELECTRUM_HOME /home/$ELECTRUM_USER
 ENV ELECTRUM_NETWORK mainnet
 
 RUN mkdir -p /data ${ELECTRUM_HOME} && \
-	ln -sf /data ${ELECTRUM_HOME}/.electrum && \
-	chown ${ELECTRUM_USER} ${ELECTRUM_HOME}/.electrum /data
+	ln -sf /data ${ELECTRUM_HOME}/.electrum
 
 # IMPORTANT: always verify gpg signature before changing a hash here!
 ENV ELECTRUM_CHECKSUM_SHA512 $CHECKSUM_SHA512
@@ -36,7 +35,7 @@ RUN adduser -D $ELECTRUM_USER && \
     wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz && \
     [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] && \
     echo -e "**************************\n SHA 512 Checksum OK\n**************************" && \
-    pip3 install cryptography==2.1.4 pycryptodomex Electrum-${ELECTRUM_VERSION}.tar.gz && \
+    pip3 install cryptography>=2.6 pycryptodomex Electrum-${ELECTRUM_VERSION}.tar.gz && \
     rm -f Electrum-${ELECTRUM_VERSION}.tar.gz && \
     apk del build-dependencies
 
