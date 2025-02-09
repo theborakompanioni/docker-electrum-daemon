@@ -53,6 +53,11 @@ docker exec -it electrum-daemon electrum daemon status
 }
 ```
 
+##### Inspecting the container
+```
+docker run --rm --entrypoint="/bin/bash" -it osminogin/electrum-daemon
+```
+
 
 #### docker-compose
 

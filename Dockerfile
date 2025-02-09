@@ -1,8 +1,18 @@
-FROM python:3.9.12-alpine
+# python:3.9.21-bullseye@sha256:ccb1360e4eddf52a74bbbabb0c5a1c8640f09440e2b76228c6a69dd4b683f726
+
+FROM python:3.9.21-bullseye AS base
+ARG ELECTRUM_VERSION
+ARG ELECTRUM_CHECKSUM_SHA512
+
+RUN wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz \
+    && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
+    && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
+
+FROM python:3.9.21-bullseye AS builder
 
 ARG BUILD_DATE
 ARG VCS_REF
-ARG VERSION
+ARG ELECTRUM_VERSION
 ARG CHECKSUM_SHA512
 LABEL maintainer="osintsev@gmail.com" \
 	org.label-schema.vendor="Boroda Group" \
@@ -18,34 +28,39 @@ LABEL maintainer="osintsev@gmail.com" \
 	org.label-schema.docker.cmd='docker run -d --name electrum-daemon --publish 127.0.0.1:7000:7000 --volume /srv/electrum:/data osminogin/electrum-daemon' \
 	org.label-schema.schema-version="1.0"
 
-ENV ELECTRUM_VERSION $VERSION
-ENV ELECTRUM_USER electrum
-ENV ELECTRUM_PASSWORD electrumz		# XXX: CHANGE REQUIRED!
-ENV ELECTRUM_HOME /home/$ELECTRUM_USER
-ENV ELECTRUM_NETWORK mainnet
-
-RUN mkdir -p /data ${ELECTRUM_HOME} && \
-	ln -sf /data ${ELECTRUM_HOME}/.electrum
+ENV ELECTRUM_USER=electrum
+ENV ELECTRUM_PASSWORD=electrumz
+ENV ELECTRUM_HOME=/home/$ELECTRUM_USER
+ENV ELECTRUM_NETWORK=mainnet
 
 # IMPORTANT: always verify gpg signature before changing a hash here!
 ENV ELECTRUM_CHECKSUM_SHA512 $CHECKSUM_SHA512
 
-RUN adduser -D $ELECTRUM_USER && \
-    apk --no-cache add --virtual build-dependencies gcc musl-dev libsecp256k1 libsecp256k1-dev libressl-dev  && \
-    wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz && \
-    [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] && \
-    echo -e "**************************\n SHA 512 Checksum OK\n**************************" && \
-    pip3 install cryptography>=2.6 pycryptodomex Electrum-${ELECTRUM_VERSION}.tar.gz && \
-    rm -f Electrum-${ELECTRUM_VERSION}.tar.gz && \
-    apk del build-dependencies
+RUN addgroup --system ${ELECTRUM_USER} \
+	&& adduser --system --disabled-login --ingroup ${ELECTRUM_USER} --gecos 'electrum user' ${ELECTRUM_USER}
+
+RUN apt-get update \
+	&& apt-get install -qq --no-install-recommends --no-install-suggests -y libsecp256k1-dev python3-cryptography \
+	&& pip3 install cryptography==2.1.4
+
+COPY --from=base Electrum-${ELECTRUM_VERSION}.tar.gz ${ELECTRUM_HOME}
+RUN chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
+&& tar -xf ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz --directory ${ELECTRUM_HOME} \
+&& rm -f ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
+&& chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION} \
+&& ln -sf ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}/run_electrum /usr/local/bin/electrum
+
+
+RUN apt-get clean \
+    && rm --recursive --force /var/lib/apt/lists/*
 
 RUN mkdir -p /data \
 	    ${ELECTRUM_HOME}/.electrum/wallets/ \
 	    ${ELECTRUM_HOME}/.electrum/testnet/wallets/ \
 	    ${ELECTRUM_HOME}/.electrum/regtest/wallets/ \
-	    ${ELECTRUM_HOME}/.electrum/simnet/wallets/ && \
-    ln -sf ${ELECTRUM_HOME}/.electrum/ /data && \
-	chown -R ${ELECTRUM_USER} ${ELECTRUM_HOME}/.electrum /data
+	    ${ELECTRUM_HOME}/.electrum/simnet/wallets/ \
+	&& chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/.electrum /data \
+	&& ln -sf /data ${ELECTRUM_HOME}/.electrum
 
 USER $ELECTRUM_USER
 WORKDIR $ELECTRUM_HOME
