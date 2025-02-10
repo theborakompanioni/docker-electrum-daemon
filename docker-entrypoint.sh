@@ -12,8 +12,13 @@ elif [ "$ELECTRUM_NETWORK" = "simnet" ]; then
   FLAGS='--simnet'
 fi
 
-# Graceful shutdown
-trap 'electrum stop; exit 0' SIGTERM
+function trap_sigterm() {
+  echo "Stopping electrum..."
+  electrum $FLAGS stop
+  exit 0
+}
+
+trap 'trap_sigterm' SIGTERM
 
 # Set config
 electrum --offline $FLAGS setconfig rpcuser ${ELECTRUM_USER}

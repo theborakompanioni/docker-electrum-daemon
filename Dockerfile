@@ -8,12 +8,11 @@ RUN wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_V
     && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
     && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
 
-FROM python:3.9.21-bullseye AS builder
+FROM python:3.9.21-slim-bullseye AS builder
 
 ARG BUILD_DATE
 ARG VCS_REF
 ARG ELECTRUM_VERSION
-ARG CHECKSUM_SHA512
 LABEL maintainer="osintsev@gmail.com" \
 	org.label-schema.vendor="Boroda Group" \
 	org.label-schema.build-date=$BUILD_DATE \
@@ -33,15 +32,12 @@ ENV ELECTRUM_PASSWORD=electrumz
 ENV ELECTRUM_HOME=/home/$ELECTRUM_USER
 ENV ELECTRUM_NETWORK=mainnet
 
-# IMPORTANT: always verify gpg signature before changing a hash here!
-ENV ELECTRUM_CHECKSUM_SHA512 $CHECKSUM_SHA512
-
 RUN addgroup --system ${ELECTRUM_USER} \
 	&& adduser --system --disabled-login --ingroup ${ELECTRUM_USER} --gecos 'electrum user' ${ELECTRUM_USER}
 
 RUN apt-get update \
-	&& apt-get install -qq --no-install-recommends --no-install-suggests -y libsecp256k1-dev python3-cryptography \
-	&& pip3 install cryptography==2.1.4
+	&& apt-get install -qq --no-install-recommends --no-install-suggests -y gcc musl-dev libsecp256k1-dev \
+	&& pip3 install cryptography==2.6.1
 
 COPY --from=base Electrum-${ELECTRUM_VERSION}.tar.gz ${ELECTRUM_HOME}
 RUN chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
