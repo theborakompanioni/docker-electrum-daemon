@@ -1,5 +1,3 @@
-# python:3.9.21-bullseye@sha256:ccb1360e4eddf52a74bbbabb0c5a1c8640f09440e2b76228c6a69dd4b683f726
-
 FROM python:3.9.21-bullseye AS base
 ARG ELECTRUM_VERSION
 ARG ELECTRUM_CHECKSUM_SHA512
@@ -8,7 +6,7 @@ RUN wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_V
     && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
     && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
 
-FROM python:3.9.21-slim-bullseye AS builder
+FROM python:3.9.21-alpine AS builder
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -32,23 +30,16 @@ ENV ELECTRUM_PASSWORD=electrumz
 ENV ELECTRUM_HOME=/home/$ELECTRUM_USER
 ENV ELECTRUM_NETWORK=mainnet
 
-RUN addgroup --system ${ELECTRUM_USER} \
-	&& adduser --system --disabled-login --ingroup ${ELECTRUM_USER} --gecos 'electrum user' ${ELECTRUM_USER}
-
-RUN apt-get update \
-	&& apt-get install -qq --no-install-recommends --no-install-suggests -y gcc musl-dev libsecp256k1-dev \
-	&& pip3 install cryptography==2.6.1
+RUN adduser -D $ELECTRUM_USER
 
 COPY --from=base Electrum-${ELECTRUM_VERSION}.tar.gz ${ELECTRUM_HOME}
-RUN chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
-&& tar -xf ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz --directory ${ELECTRUM_HOME} \
-&& rm -f ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
-&& chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION} \
-&& ln -sf ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}/run_electrum /usr/local/bin/electrum
 
-
-RUN apt-get clean \
-    && rm --recursive --force /var/lib/apt/lists/*
+RUN apk --no-cache add --virtual runtime-dependencies libsecp256k1 libsecp256k1-dev \
+  && apk --no-cache add --virtual build-dependencies gcc musl-dev python3-dev libffi-dev libressl-dev cargo pkgconfig \
+  && chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
+  && pip3 install cryptography==44.0.1 ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
+  && rm -f ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
+  && apk del build-dependencies
 
 RUN mkdir -p /data \
 	    ${ELECTRUM_HOME}/.electrum/wallets/ \
