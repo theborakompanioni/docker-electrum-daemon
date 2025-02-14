@@ -34,9 +34,9 @@ docker run --rm --name electrum \
     osminogin/electrum-daemon
 ```
 ```bash
-docker exec -it electrum-daemon electrum create
-docker exec -it electrum-daemon electrum daemon load_wallet
-docker exec -it electrum-daemon electrum daemon status
+docker exec -it electrum-daemon electrum --regtest create
+docker exec -it electrum-daemon electrum --regtest load_wallet
+docker exec -it electrum-daemon electrum --regtest getinfo
 {
     "auto_connect": true,
     "blockchain_height": 505136,
@@ -46,11 +46,16 @@ docker exec -it electrum-daemon electrum daemon status
     "server": "us01.hamster.science",
     "server_height": 505136,
     "spv_nodes": 10,
-    "version": "3.0.6",
-    "wallets": {
-        "/home/electrum/.electrum/wallets/default_wallet": true
-    }
+    "version": "4.5.8"
 }
+docker exec -it electrum-daemon electrum --regtest list_wallets
+[
+    {
+        "path": "/home/electrum/.electrum/regtest/wallets/default_wallet",
+        "synchronized": false,
+        "unlocked": false
+    }
+]
 ```
 
 ##### Inspecting the container
