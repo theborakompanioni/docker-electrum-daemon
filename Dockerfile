@@ -1,6 +1,8 @@
-FROM python:3.9.21-bullseye AS base
+FROM alpine:3.21.3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c AS base
 ARG ELECTRUM_VERSION
 ARG ELECTRUM_CHECKSUM_SHA512
+
+RUN apk --no-cache add --update ca-certificates openssl wget && update-ca-certificates
 
 RUN wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz \
     && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
