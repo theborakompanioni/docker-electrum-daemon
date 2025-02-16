@@ -35,7 +35,7 @@ electrum --offline $FLAGS setconfig dont_show_testnet_warning true
 electrum --offline $FLAGS setconfig auto_connect true
 electrum --offline $FLAGS setconfig oneserver true
 
-# XXX: Check load wallet or create
+# XXX: check load wallet or create
 
 # run application (not as daemon, as we want the logs)
 electrum $FLAGS daemon -v &
