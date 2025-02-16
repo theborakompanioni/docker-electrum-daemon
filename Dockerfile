@@ -8,7 +8,7 @@ RUN wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_V
     && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
     && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
 
-FROM python:3.9.21-alpine AS builder
+FROM python:3.9.21-alpine3.21@sha256:3cc37465a79297e472943a78c94eb094e808293b084716c80bc27d4eb3a5e3fd AS builder
 
 ARG BUILD_DATE
 ARG VCS_REF
@@ -27,32 +27,33 @@ LABEL maintainer="osintsev@gmail.com" \
 	org.label-schema.docker.cmd='docker run -d --name electrum-daemon --publish 127.0.0.1:7000:7000 --volume /srv/electrum:/data osminogin/electrum-daemon' \
 	org.label-schema.schema-version="1.0"
 
-ENV ELECTRUM_USER=electrum
-ENV ELECTRUM_PASSWORD=electrumz
-ENV ELECTRUM_HOME=/home/$ELECTRUM_USER
+ENV ELECTRUM_RPCUSER=electrum
+ENV ELECTRUM_RPCPASSWORD=electrumz
 ENV ELECTRUM_NETWORK=mainnet
 
-RUN adduser -D $ELECTRUM_USER
+# "`-D` Don't assign a password"
+RUN addgroup --gid 1000 -S electrum && \
+    adduser --uid 1000 -D -S electrum -G electrum
 
-COPY --from=base Electrum-${ELECTRUM_VERSION}.tar.gz ${ELECTRUM_HOME}
+COPY --from=base Electrum-${ELECTRUM_VERSION}.tar.gz /home/electrum
 
 RUN apk --no-cache add --virtual runtime-dependencies libsecp256k1 libsecp256k1-dev \
   && apk --no-cache add --virtual build-dependencies gcc musl-dev python3-dev libffi-dev libressl-dev cargo pkgconfig \
-  && chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
-  && pip3 install cryptography==44.0.1 ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
-  && rm -f ${ELECTRUM_HOME}/Electrum-${ELECTRUM_VERSION}.tar.gz \
+  && chown electrum:electrum /home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz \
+  && pip3 install cryptography==44.0.1 /home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz \
+  && rm -f /home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz \
   && apk del build-dependencies
 
-RUN mkdir -p /data \
-	    ${ELECTRUM_HOME}/.electrum/wallets/ \
-	    ${ELECTRUM_HOME}/.electrum/testnet/wallets/ \
-	    ${ELECTRUM_HOME}/.electrum/regtest/wallets/ \
-	    ${ELECTRUM_HOME}/.electrum/simnet/wallets/ \
-	&& chown -R ${ELECTRUM_USER}:${ELECTRUM_USER} ${ELECTRUM_HOME}/.electrum /data \
-	&& ln -sf /data ${ELECTRUM_HOME}/.electrum
+RUN mkdir -p /home/electrum/.electrum/wallets/ \
+    /home/electrum/.electrum/testnet/wallets/ \
+    /home/electrum/.electrum/regtest/wallets/ \
+    /home/electrum/.electrum/simnet/wallets/ \
+  && chown -R electrum:electrum /home/electrum
+  # && ln -s -f -T /home/electrum/.electrum /data \
+  # && chown -L -R electrum:electrum /data
 
-USER $ELECTRUM_USER
-WORKDIR $ELECTRUM_HOME
+USER electrum
+WORKDIR /home/electrum
 VOLUME /data
 EXPOSE 7000
 

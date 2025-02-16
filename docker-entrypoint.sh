@@ -21,8 +21,8 @@ function trap_sigterm() {
 trap 'trap_sigterm' SIGTERM
 
 # Set config
-electrum --offline $FLAGS setconfig rpcuser ${ELECTRUM_USER}
-electrum --offline $FLAGS setconfig rpcpassword ${ELECTRUM_PASSWORD}
+electrum --offline $FLAGS setconfig rpcuser ${ELECTRUM_RPCUSER}
+electrum --offline $FLAGS setconfig rpcpassword ${ELECTRUM_RPCPASSWORD}
 electrum --offline $FLAGS setconfig rpchost 0.0.0.0
 electrum --offline $FLAGS setconfig rpcport 7000
 electrum --offline $FLAGS setconfig check_updates false

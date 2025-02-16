@@ -60,7 +60,7 @@ docker exec -it electrum-daemon electrum --regtest list_wallets
 
 ##### Inspecting the container
 ```
-docker run --rm --entrypoint="/bin/bash" -it osminogin/electrum-daemon
+docker run --rm --entrypoint="/bin/ash" -it osminogin/electrum-daemon
 ```
 
 
