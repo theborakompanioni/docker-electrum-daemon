@@ -14,3 +14,7 @@ services:
       - ELECTRUM_NETWORK=regtest
     volumes:
       - ./.data:/home/electrum/.electrum:z
+    healthcheck:
+      test: [ "CMD", "electrum", "--regtest", "getinfo" ]
+      interval: 3s
+      retries: 20
