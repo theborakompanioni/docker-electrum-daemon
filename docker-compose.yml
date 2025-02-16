@@ -12,5 +12,5 @@ services:
       - ELECTRUM_RPCUSER=electrum
       - ELECTRUM_RPCPASSWORD=changeme
       - ELECTRUM_NETWORK=regtest
-    volumes:
-        - ../electrum:/data
+    #volumes:
+    #    - ./data:/home/electrum/.electrum

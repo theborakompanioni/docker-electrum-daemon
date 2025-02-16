@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -ex
 
-# Network switch
+# network switch
 if [ "$ELECTRUM_NETWORK" = "mainnet" ]; then
   FLAGS='--mainnet'
 elif [ "$ELECTRUM_NETWORK" = "testnet" ]; then
@@ -18,9 +18,13 @@ function trap_sigterm() {
   exit 0
 }
 
-trap 'trap_sigterm' SIGTERM
+# enable graceful shutdown
+trap 'trap_sigterm' SIGINT SIGTERM SIGKILL
 
-# Set config
+# stop daemon if running (removes lingering lockfile for daemon)
+electrum $FLAGS stop > /dev/null || :
+
+# setup config
 electrum --offline $FLAGS setconfig rpcuser ${ELECTRUM_RPCUSER}
 electrum --offline $FLAGS setconfig rpcpassword ${ELECTRUM_RPCPASSWORD}
 electrum --offline $FLAGS setconfig rpchost 0.0.0.0
@@ -33,5 +37,10 @@ electrum --offline $FLAGS setconfig oneserver true
 
 # XXX: Check load wallet or create
 
-# Run application
-electrum $FLAGS daemon -v
+# run application (not as daemon, as we want the logs)
+electrum $FLAGS daemon -v &
+
+# wait forever
+while true; do
+  tail -f /dev/null & wait ${!}
+done

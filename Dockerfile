@@ -49,12 +49,10 @@ RUN mkdir -p /home/electrum/.electrum/wallets/ \
     /home/electrum/.electrum/regtest/wallets/ \
     /home/electrum/.electrum/simnet/wallets/ \
   && chown -R electrum:electrum /home/electrum
-  # && ln -s -f -T /home/electrum/.electrum /data \
-  # && chown -L -R electrum:electrum /data
 
 USER electrum
 WORKDIR /home/electrum
-VOLUME /data
+#VOLUME /home/electrum/.electrum
 EXPOSE 7000
 
 COPY docker-entrypoint.sh /usr/local/bin/
