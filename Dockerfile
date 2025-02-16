@@ -46,8 +46,10 @@ RUN apk --no-cache add --virtual runtime-dependencies libsecp256k1 libsecp256k1-
 
 RUN mkdir -p /home/electrum/.electrum/wallets/ \
     /home/electrum/.electrum/testnet/wallets/ \
+    /home/electrum/.electrum/testnet4/wallets/ \
     /home/electrum/.electrum/regtest/wallets/ \
     /home/electrum/.electrum/simnet/wallets/ \
+    /home/electrum/.electrum/signet/wallets/ \
   && chown -R electrum:electrum /home/electrum
 
 USER electrum
