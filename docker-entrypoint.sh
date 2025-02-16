@@ -1,25 +1,30 @@
-#!/usr/bin/env sh
+#!/bin/sh
 set -ex
 
 # network switch
 if [ "$ELECTRUM_NETWORK" = "mainnet" ]; then
-  FLAGS='--mainnet'
+  FLAGS=''
+elif [ "$ELECTRUM_NETWORK" = "testnet4" ]; then
+  FLAGS='--testnet4'
 elif [ "$ELECTRUM_NETWORK" = "testnet" ]; then
   FLAGS='--testnet'
 elif [ "$ELECTRUM_NETWORK" = "regtest" ]; then
   FLAGS='--regtest'
 elif [ "$ELECTRUM_NETWORK" = "simnet" ]; then
   FLAGS='--simnet'
+elif [ "$ELECTRUM_NETWORK" = "signet" ]; then
+  FLAGS='--signet'
 fi
 
 function trap_sigterm() {
   echo "Stopping electrum..."
   electrum $FLAGS stop
+  echo "Successfully stopped electrum."
   exit 0
 }
 
 # enable graceful shutdown
-trap 'trap_sigterm' SIGINT SIGTERM SIGKILL
+trap 'trap_sigterm' SIGHUP SIGINT SIGQUIT SIGTERM
 
 # stop daemon if running (removes lingering lockfile for daemon)
 electrum $FLAGS stop > /dev/null || :
