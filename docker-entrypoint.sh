@@ -40,6 +40,8 @@ electrum --offline $FLAGS setconfig dont_show_testnet_warning true
 electrum --offline $FLAGS setconfig auto_connect true
 electrum --offline $FLAGS setconfig oneserver true
 electrum --offline $FLAGS setconfig confirmed_only false
+electrum --offline $FLAGS setconfig use_exchange_rate false
+
 
 # XXX: check load wallet or create
 
