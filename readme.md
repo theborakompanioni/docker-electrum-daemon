@@ -8,9 +8,7 @@
 
 **Electrum client running as a daemon in docker container with JSON-RPC enabled.**
 
-[Electrum client](https://electrum.org/) is light bitcoin wallet software operates through supernodes (Electrum server instances actually).
-
-Don't confuse with [Electrum server](https://github.com/spesmilo/electrum-server) that use bitcoind and full blockchain data.
+[Electrum client](https://electrum.org/) is a lightweight bitcoin wallet software that connects to Electrum servers, e.g. [ElectrumX](https://github.com/spesmilo/electrumx), [electrs](https://github.com/romanz/electrs), etc.
 
 ### Ports
 - `7000` - JSON-RPC port
