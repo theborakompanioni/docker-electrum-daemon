@@ -1,0 +1,53 @@
+
+on:
+  push:
+
+env:
+  TEST_TAG: theborakompanioni/docker-electrum-daemon:test
+
+jobs:
+  readenv:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      electrum_version: ${{ steps.dotenv.outputs.electrum_version }}
+      electrum_checksum_sha512: ${{ steps.dotenv.outputs.electrum_checksum_sha512 }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Read .env file
+        id: dotenv
+        uses: falti/dotenv-action@v1.1.4
+        with:
+          log-variables: true
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: readenv
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        env:
+          SOURCE_DATE_EPOCH: 0
+        with:
+          load: true
+          push: false
+          tags: ${{ env.TEST_TAG }}
+          build-args: |
+            "ELECTRUM_VERSION=${{ needs.readenv.outputs.electrum_version }}"
+            "ELECTRUM_CHECKSUM_SHA512=${{ needs.readenv.outputs.electrum_checksum_sha512 }}"
+
+      - name: Test
+        run: |
+          docker run --rm --env ELECTRUM_NETWORK=regtest --env DRY_RUN=true ${{ env.TEST_TAG }}

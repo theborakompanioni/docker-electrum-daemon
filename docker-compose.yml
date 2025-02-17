@@ -13,6 +13,7 @@ services:
       - ELECTRUM_RPCUSER=electrum
       - ELECTRUM_RPCPASSWORD=changeme
       - ELECTRUM_NETWORK=regtest
+      - DRY_RUN=${DRY_RUN:-false}
     volumes:
       - ./.data:/home/electrum/.electrum:z
     healthcheck:

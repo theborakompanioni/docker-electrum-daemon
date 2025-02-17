@@ -31,6 +31,7 @@ ENV ELECTRUM_RPCUSER=electrum
 ENV ELECTRUM_RPCPASSWORD=electrumz
 ENV ELECTRUM_RPCPORT=7000
 ENV ELECTRUM_NETWORK=mainnet
+ENV DRY_RUN=false
 
 # "`-D` Don't assign a password"
 RUN addgroup --gid 1000 -S electrum && \

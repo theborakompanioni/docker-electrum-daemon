@@ -2,17 +2,17 @@
 set -ex
 
 # network switch
-if [ "$ELECTRUM_NETWORK" = "mainnet" ]; then
+if [ "${ELECTRUM_NETWORK}" = "mainnet" ]; then
   FLAGS=''
-elif [ "$ELECTRUM_NETWORK" = "testnet4" ]; then
+elif [ "${ELECTRUM_NETWORK}" = "testnet4" ]; then
   FLAGS='--testnet4'
-elif [ "$ELECTRUM_NETWORK" = "testnet" ]; then
+elif [ "${ELECTRUM_NETWORK}" = "testnet" ]; then
   FLAGS='--testnet'
-elif [ "$ELECTRUM_NETWORK" = "regtest" ]; then
+elif [ "${ELECTRUM_NETWORK}" = "regtest" ]; then
   FLAGS='--regtest'
-elif [ "$ELECTRUM_NETWORK" = "simnet" ]; then
+elif [ "${ELECTRUM_NETWORK}" = "simnet" ]; then
   FLAGS='--simnet'
-elif [ "$ELECTRUM_NETWORK" = "signet" ]; then
+elif [ "${ELECTRUM_NETWORK}" = "signet" ]; then
   FLAGS='--signet'
 fi
 
@@ -48,7 +48,11 @@ electrum --offline $FLAGS setconfig use_exchange_rate false
 # run application (not as daemon, as we want the logs)
 electrum $FLAGS daemon -v &
 
-# wait forever
-while true; do
-  tail -f /dev/null & wait ${!}
-done
+if [ "${DRY_RUN}" = "true" ]; then
+  :
+else
+  # wait forever
+  while true; do
+    tail -f /dev/null & wait ${!}
+  done
+fi

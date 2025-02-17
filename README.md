@@ -1,7 +1,10 @@
+[![Build](https://github.com/theborakompanioni/docker-electrum-daemon/actions/workflows/build.yml/badge.svg)](https://github.com/theborakompanioni/docker-electrum-daemon/actions/workflows/build.yml)
+[![GitHub Release](https://img.shields.io/github/release/theborakompanioni/docker-electrum-daemon.svg?maxAge=3600)](https://github.com/theborakompanioni/docker-electrum-daemon/releases/latest)
+[![License](https://img.shields.io/github/license/theborakompanioni/docker-electrum-daemon.svg?maxAge=2592000)](https://github.com/theborakompanioni/docker-electrum-daemon/blob/master/LICENSE)
+
+
+
 # docker-electrum-daemon
-
- [![](https://images.microbadger.com/badges/version/osminogin/electrum-daemon.svg)](https://microbadger.com/images/osminogin/electrum-daemon) [![](https://img.shields.io/docker/build/osminogin/electrum-daemon.svg)](https://hub.docker.com/r/osminogin/electrum-daemon/builds/) [![](https://images.microbadger.com/badges/commit/osminogin/electrum-daemon.svg)](https://microbadger.com/images/osminogin/electrum-daemon) [![](https://img.shields.io/docker/stars/osminogin/electrum-daemon.svg)](https://hub.docker.com/r/osminogin/electrum-daemon) [![](https://images.microbadger.com/badges/image/osminogin/electrum-daemon.svg)](https://microbadger.com/images/osminogin/electrum-daemon) [![License: MIT](https://img.shields.io/badge/License-MIT-black.svg)](https://opensource.org/licenses/MIT)
-
 
 **Electrum client running as a daemon in docker container with JSON-RPC enabled.**
 

@@ -28,28 +28,32 @@ system-info:
 
 [group("development")]
 docker-build-no-cache:
-	@just build `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+  @just build `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 
 alias build := docker-build
 
 [group("development")]
 docker-build build_date='1970-01-01T00:00:00Z':
-	@docker build \
-		--build-arg BUILD_DATE={{build_date}} \
-		--build-arg ELECTRUM_VERSION=${ELECTRUM_VERSION} \
-		--build-arg ELECTRUM_CHECKSUM_SHA512=${ELECTRUM_CHECKSUM_SHA512} \
-		--build-arg VCS_REF="{{git_commit}}" \
-		--tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" .
+  @docker build \
+    --build-arg BUILD_DATE={{build_date}} \
+    --build-arg ELECTRUM_VERSION=${ELECTRUM_VERSION} \
+    --build-arg ELECTRUM_CHECKSUM_SHA512=${ELECTRUM_CHECKSUM_SHA512} \
+    --build-arg VCS_REF="{{git_commit}}" \
+    --tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" .
 
 [group("development")]
 docker-tag:
-	docker tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" "${DOCKER_IMAGE_NAME}:latest"
+  docker tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" "${DOCKER_IMAGE_NAME}:latest"
 
 [group("development")]
-up:
-	@docker compose up --build
+up *args='':
+  @docker compose up --build {{args}}
+
+[group("development")]
+up-dry-run:
+  DRY_RUN=true just up
 
 [group("development")]
 info:
-	@echo "Docker Image: ${DOCKER_IMAGE_NAME}:{{docker_tag}}"
-	@echo "Electrum Version: ${ELECTRUM_VERSION}"
+  @echo "Docker Image: ${DOCKER_IMAGE_NAME}:{{docker_tag}}"
+  @echo "Electrum Version: ${ELECTRUM_VERSION}"
