@@ -13,22 +13,23 @@ FROM python:3.9.21-alpine3.21@sha256:3cc37465a79297e472943a78c94eb094e808293b084
 ARG BUILD_DATE
 ARG VCS_REF
 ARG ELECTRUM_VERSION
-LABEL maintainer="osintsev@gmail.com" \
-	org.label-schema.vendor="Boroda Group" \
-	org.label-schema.build-date=$BUILD_DATE \
+LABEL maintainer="theborakompanioni+github@gmail.com" \
+	org.label-schema.vendor="theborakompanioni" \
+	org.label-schema.build-date="${BUILD_DATE}" \
 	org.label-schema.name="Electrum wallet (RPC enabled)" \
 	org.label-schema.description="Electrum wallet with JSON-RPC enabled (daemon mode)" \
-	org.label-schema.version=$ELECTRUM_VERSION \
-	org.label-schema.vcs-ref=$VCS_REF \
-	org.label-schema.vcs-url="https://github.com/osminogin/docker-electrum-daemon" \
-	org.label-schema.usage="https://github.com/osminogin/docker-electrum-daemon#getting-started" \
+	org.label-schema.version="${ELECTRUM_VERSION}" \
+	org.label-schema.vcs-ref="${VCS_REF}" \
+	org.label-schema.vcs-url="https://github.com/theborakompanioni/docker-electrum-daemon" \
+	org.label-schema.usage="https://github.com/theborakompanioni/docker-electrum-daemon#getting-started" \
 	org.label-schema.license="MIT" \
 	org.label-schema.url="https://electrum.org" \
-	org.label-schema.docker.cmd='docker run -d --name electrum-daemon --publish 127.0.0.1:7000:7000 --volume /srv/electrum:/data osminogin/electrum-daemon' \
+	org.label-schema.docker.cmd='docker run --name electrum-daemon --publish 127.0.0.1:7000:7000 --volume ./.data:/home/electrum/.electrum theborakompanioni/electrum-daemon' \
 	org.label-schema.schema-version="1.0"
 
 ENV ELECTRUM_RPCUSER=electrum
 ENV ELECTRUM_RPCPASSWORD=electrumz
+ENV ELECTRUM_RPCPORT=7000
 ENV ELECTRUM_NETWORK=mainnet
 
 # "`-D` Don't assign a password"

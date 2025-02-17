@@ -7,13 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Added systemd unit for Electrum wallet service     @osminogin
-- Electrum version updated to 3.3.8     @chris54721
-- Python version bumped to 0.4.2.5  @osminogin
-- Image metadata updated    @osminogin
-- Fix image build   @theborakompanioni
+- Reproducible builds
+- Docker multi-stage setup for faster builds
+- Use just as task runner
+- Create directory structures for networks
 
-
-### Added
-- Test network support added    @chris54721
-- Changelog added.
+Forked from [osminogin/docker-electrum-daemon@cd7e30e4](https://github.com/osminogin/docker-electrum-daemon/commit/cd7e30e402f48984e0271d34d2d552a3d3989c9d).

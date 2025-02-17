@@ -33,7 +33,7 @@ electrum $FLAGS stop > /dev/null || :
 electrum --offline $FLAGS setconfig rpcuser ${ELECTRUM_RPCUSER}
 electrum --offline $FLAGS setconfig rpcpassword ${ELECTRUM_RPCPASSWORD}
 electrum --offline $FLAGS setconfig rpchost 0.0.0.0
-electrum --offline $FLAGS setconfig rpcport 7000
+electrum --offline $FLAGS setconfig rpcport ${ELECTRUM_RPCPORT}
 electrum --offline $FLAGS setconfig check_updates false
 electrum --offline $FLAGS setconfig log_to_file false
 electrum --offline $FLAGS setconfig dont_show_testnet_warning true

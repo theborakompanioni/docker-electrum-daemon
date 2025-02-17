@@ -5,9 +5,10 @@ services:
       args:
         - ELECTRUM_VERSION=${ELECTRUM_VERSION}
         - ELECTRUM_CHECKSUM_SHA512=${ELECTRUM_CHECKSUM_SHA512}
+        - ELECTRUM_RPCPORT=17000
     container_name: electrum
     ports:
-      - 127.0.0.1:7000:7000
+      - 127.0.0.1:7000:17000
     environment:
       - ELECTRUM_RPCUSER=electrum
       - ELECTRUM_RPCPASSWORD=changeme

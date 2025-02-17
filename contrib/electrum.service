@@ -8,8 +8,8 @@ After=docker.service network.target
 TimeoutStartSec=5
 Restart=always
 RestartSec=20s
-ExecStartPre=/usr/bin/docker pull osminogin/electrum-daemon
-ExecStart=/usr/bin/docker run --rm --name electrum -p 127.0.0.1:9000:9000 osminogin/electrum-daemon
+ExecStartPre=/usr/bin/docker pull ghcr.io/theborakompanioni/electrum-daemon
+ExecStart=/usr/bin/docker run --rm --name electrum --publish 127.0.0.1:7000:7000 theborakompanioni/electrum-daemon
 ExecStop=/usr/bin/docker stop electrum
 
 [Install]
