@@ -26,13 +26,16 @@ system-info:
   @echo "os: {{os()}}"
   @echo "os family: {{os_family()}}"
 
-[group("development")]
+
+# create a docker image (no cache)
+[group("docker")]
 docker-build-no-cache:
   @just build `date -u +"%Y-%m-%dT%H:%M:%SZ"`
 
 alias build := docker-build
 
-[group("development")]
+# create a docker image
+[group("docker")]
 docker-build build_date='1970-01-01T00:00:00Z':
   @docker build \
     --build-arg BUILD_DATE={{build_date}} \
@@ -41,17 +44,43 @@ docker-build build_date='1970-01-01T00:00:00Z':
     --build-arg VCS_REF="{{git_commit}}" \
     --tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" .
 
-[group("development")]
+# size of the docker image
+[group("docker")]
+docker-image-size:
+    @docker images "$DOCKER_IMAGE_NAME"
+
+[group("docker")]
 docker-tag:
   docker tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" "${DOCKER_IMAGE_NAME}:latest"
 
-[group("development")]
-up *args='':
+# run the docker image
+[group("docker")]
+docker-run:
+    @echo "Running container from docker image ..."
+    @docker run \
+      --rm \
+      --name electrum-daemon \
+      --publish "${ELECTRUM_RPCPORT}:${ELECTRUM_RPCPORT}" \
+      --env ELECTRUM_NETWORK=${ELECTRUM_NETWORK} \
+      --env ELECTRUM_RPCPORT=${ELECTRUM_RPCPORT} \
+      "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
+
+# run the docker image and start shell
+[group("docker")]
+docker-run-shell:
+    @echo "Running container from docker image with shell..."
+    @docker run \
+      --rm \
+      --entrypoint="/bin/ash" \
+      -it "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
+
+[group("docker")]
+docker-compose-up *args='':
   @docker compose up --build {{args}}
 
-[group("development")]
-up-dry-run:
-  DRY_RUN=true just up
+[group("docker")]
+docker-compose-up-dry-run:
+  DRY_RUN=true just docker-compose-up
 
 [group("development")]
 info:

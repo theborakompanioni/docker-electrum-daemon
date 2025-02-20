@@ -5,7 +5,6 @@ services:
       args:
         - ELECTRUM_VERSION=${ELECTRUM_VERSION}
         - ELECTRUM_CHECKSUM_SHA512=${ELECTRUM_CHECKSUM_SHA512}
-        - ELECTRUM_RPCPORT=17000
     container_name: electrum
     ports:
       - 127.0.0.1:7000:17000
@@ -13,6 +12,7 @@ services:
       - ELECTRUM_RPCUSER=electrum
       - ELECTRUM_RPCPASSWORD=changeme
       - ELECTRUM_NETWORK=regtest
+      - ELECTRUM_RPCPORT=17000
       - DRY_RUN=${DRY_RUN:-false}
     volumes:
       - ./.data:/home/electrum/.electrum:z

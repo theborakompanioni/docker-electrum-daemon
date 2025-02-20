@@ -8,12 +8,6 @@
 
 [Electrum client](https://electrum.org/) is a lightweight bitcoin wallet software that connects to Electrum servers, e.g. [ElectrumX](https://github.com/spesmilo/electrumx), [electrs](https://github.com/romanz/electrs), etc.
 
-### Ports
-- `7000` - JSON-RPC port
-
-### Volumes
-- `/home/electrum/.electrum` - electrum data folder
-
 ## Getting started
 
 #### docker
@@ -21,7 +15,7 @@
 Running with Docker:
 
 ```bash
-docker run --rm --name electrum \
+docker run --rm --name electrum-daemon \
     --env ELECTRUM_NETWORK=regtest \
     --publish 127.0.0.1:7000:7000 \
     --volume ./.data:/home/electrum/.electrum \
@@ -72,7 +66,7 @@ curl --data-binary '{"id":"1","method":"listaddresses"}' http://electrum:electru
 
 :exclamation:**Warning**:exclamation:
 
-Always link electrum daemon to containers or bind to localhost directly and not expose 7000 port for security reasons.
+Always link electrum daemon to containers or bind to localhost directly and not expose `ELECTRUM_RPCPORT` port for security reasons.
 
 ## API
 
