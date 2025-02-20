@@ -2,8 +2,6 @@
 [![GitHub Release](https://img.shields.io/github/release/theborakompanioni/docker-electrum-daemon.svg?maxAge=3600)](https://github.com/theborakompanioni/docker-electrum-daemon/releases/latest)
 [![License](https://img.shields.io/github/license/theborakompanioni/docker-electrum-daemon.svg?maxAge=2592000)](https://github.com/theborakompanioni/docker-electrum-daemon/blob/master/LICENSE)
 
-
-
 # docker-electrum-daemon
 
 **Electrum client running as a daemon in docker container with JSON-RPC enabled.**
@@ -59,7 +57,6 @@ docker exec -it electrum-daemon electrum --regtest list_wallets
 ```
 docker run --rm --entrypoint="/bin/ash" -it theborakompanioni/electrum-daemon
 ```
-
 
 #### docker-compose
 
