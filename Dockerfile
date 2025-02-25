@@ -27,11 +27,18 @@ LABEL maintainer="theborakompanioni+github@gmail.com" \
 	org.label-schema.docker.cmd='docker run --name electrum-daemon --publish 127.0.0.1:7000:7000 --volume ./.data:/home/electrum/.electrum theborakompanioni/electrum-daemon' \
 	org.label-schema.schema-version="1.0"
 
+ENV DRY_RUN=false
+ENV ELECTRUM_NETWORK=mainnet
 ENV ELECTRUM_RPCUSER=electrum
 ENV ELECTRUM_RPCPASSWORD=electrumz
 ENV ELECTRUM_RPCPORT=7000
-ENV ELECTRUM_NETWORK=mainnet
-ENV DRY_RUN=false
+
+ENV ELECTRUM_CONFIG_CHECK_UPDATES=false
+ENV ELECTRUM_CONFIG_LOG_TO_FILE=false
+ENV ELECTRUM_CONFIG_CHECK_UPDATES=false
+ENV ELECTRUM_CONFIG_AUTO_CONNECT=true
+ENV ELECTRUM_CONFIG_USE_EXCHANGE_RATE=false
+ENV ELECTRUM_CONFIG_DONT_SHOW_TESTNET_WARNING=true
 
 # "`-D` Don't assign a password"
 RUN addgroup --gid 1000 -S electrum && \
@@ -56,7 +63,6 @@ RUN mkdir -p /home/electrum/.electrum/wallets/ \
 
 USER electrum
 WORKDIR /home/electrum
-#VOLUME /home/electrum/.electrum
 EXPOSE 7000
 
 COPY docker-entrypoint.sh /usr/local/bin/
