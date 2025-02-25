@@ -9,13 +9,14 @@ services:
     ports:
       - 127.0.0.1:7000:17000
     environment:
+      - DRY_RUN=${DRY_RUN:-false}
       - ELECTRUM_NETWORK=regtest
       - ELECTRUM_RPCUSER=electrum
       - ELECTRUM_RPCPASSWORD=changeme
       - ELECTRUM_RPCPORT=17000
       - ELECTRUM_CONFIG_ONESERVER=true
       - ELECTRUM_CONFIG_SERVER=127.0.0.1:50002:t
-      - DRY_RUN=${DRY_RUN:-false}
+      - ELECTRUM_CONFIG_CONFIRMED_ONLY=false
     volumes:
       - ./.data:/home/electrum/.electrum:z
     healthcheck:
