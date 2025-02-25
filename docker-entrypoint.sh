@@ -47,12 +47,13 @@ electrum --offline $FLAGS setconfig use_exchange_rate false
 
 # run application (not as daemon, as we want the logs)
 electrum $FLAGS daemon -v &
+ELECTRUM_PID=${!}
 
 if [ "${DRY_RUN}" = "true" ]; then
   :
 else
   # wait forever
   while true; do
-    tail -f /dev/null & wait ${!}
+    tail -f /dev/null & wait ${ELECTRUM_PID}
   done
 fi
