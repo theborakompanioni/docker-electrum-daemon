@@ -18,7 +18,7 @@ fi
 
 function trap_sigterm() {
   echo "Stopping electrum..."
-  electrum $FLAGS stop
+  electrum "${FLAGS}" stop
   echo "Successfully stopped electrum."
   exit 0
 }
@@ -27,26 +27,36 @@ function trap_sigterm() {
 trap 'trap_sigterm' SIGHUP SIGINT SIGQUIT SIGTERM
 
 # stop daemon if running (removes lingering lockfile for daemon)
-electrum $FLAGS stop > /dev/null || :
+electrum "${FLAGS}" stop > /dev/null || :
 
 # setup config
-electrum --offline $FLAGS setconfig rpcuser ${ELECTRUM_RPCUSER}
-electrum --offline $FLAGS setconfig rpcpassword ${ELECTRUM_RPCPASSWORD}
-electrum --offline $FLAGS setconfig rpchost 0.0.0.0
-electrum --offline $FLAGS setconfig rpcport ${ELECTRUM_RPCPORT}
-electrum --offline $FLAGS setconfig check_updates false
-electrum --offline $FLAGS setconfig log_to_file false
-electrum --offline $FLAGS setconfig dont_show_testnet_warning true
-electrum --offline $FLAGS setconfig auto_connect true
-electrum --offline $FLAGS setconfig oneserver true
-electrum --offline $FLAGS setconfig confirmed_only false
-electrum --offline $FLAGS setconfig use_exchange_rate false
+electrum --offline "${FLAGS}" setconfig rpcuser ${ELECTRUM_RPCUSER}
+electrum --offline "${FLAGS}" setconfig rpcpassword ${ELECTRUM_RPCPASSWORD}
+electrum --offline "${FLAGS}" setconfig rpchost 0.0.0.0
+electrum --offline "${FLAGS}" setconfig rpcport ${ELECTRUM_RPCPORT}
 
+electrum --offline "${FLAGS}" setconfig check_updates false
+electrum --offline "${FLAGS}" setconfig log_to_file false
+electrum --offline "${FLAGS}" setconfig dont_show_testnet_warning true
+electrum --offline "${FLAGS}" setconfig auto_connect true
+electrum --offline "${FLAGS}" setconfig confirmed_only false
+electrum --offline "${FLAGS}" setconfig use_exchange_rate false
+
+set +x # disable execution trace logging
+for var in $(env | grep '^ELECTRUM_CONFIG_'); do
+  var_name=$(echo "${var}" | cut -d= -f1)
+  var_value=$(echo "${var}" | cut -d= -f2-)
+  stripped_var=$(echo "${var_name}" | sed 's/^ELECTRUM_CONFIG_//')
+  lowercase_var=$(echo "${stripped_var}" | tr '[:upper:]' '[:lower:]')
+  echo "electrum --offline ${FLAGS} setconfig ${lowercase_var} ${var_value}"
+  electrum --offline "${FLAGS}" setconfig "${lowercase_var}" "${var_value}"
+done
+set -x # re-enable execution trace logging
 
 # XXX: check load wallet or create
 
 # run application (not as daemon, as we want the logs)
-electrum $FLAGS daemon -v &
+electrum "${FLAGS}" daemon -v &
 ELECTRUM_PID=${!}
 
 if [ "${DRY_RUN}" = "true" ]; then
