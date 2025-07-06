@@ -57,10 +57,10 @@ docker run --rm --entrypoint="/bin/ash" -it theborakompanioni/electrum-daemon
 [docker-compose.yml](https://github.com/theborakompanioni/docker-electrum-daemon/blob/master/docker-compose.yml) to see minimal working setup. When running in production, you can use this as a guide.
 
 ```bash
-docker-compose up
-docker-compose exec electrum electrum getinfo
-docker-compose exec electrum electrum create
-docker-compose exec electrum electrum daemon load_wallet
+docker compose up
+docker compose exec electrum electrum --regtest getinfo
+docker compose exec electrum electrum --regtest create
+docker compose exec electrum electrum --regtest load_wallet
 curl --data-binary '{"id":"1","method":"listaddresses"}' http://electrum:electrumz@localhost:7000
 ```
 
