@@ -3,7 +3,7 @@ set -e
 
 # network switch
 if [ "${ELECTRUM_NETWORK}" = "mainnet" ]; then
-  FLAGS=''
+  FLAGS='--mainnet'
 elif [ "${ELECTRUM_NETWORK}" = "testnet4" ]; then
   FLAGS='--testnet4'
 elif [ "${ELECTRUM_NETWORK}" = "testnet" ]; then
