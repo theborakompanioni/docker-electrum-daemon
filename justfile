@@ -75,12 +75,16 @@ docker-run-shell:
       -it "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
 
 [group("docker")]
-docker-compose-up *args='':
-  @docker compose up --build {{args}}
+docker-compose-up profile='regtest' *args='':
+  @docker compose --profile {{profile}} up --build {{args}}
 
 [group("docker")]
-docker-compose-up-dry-run:
-  DRY_RUN=true just docker-compose-up
+docker-compose-up-dry-run profile='regtest':
+  DRY_RUN=true just docker-compose-up {{profile}}
+
+[group("docker")]
+docker-compose-up-mainnet:
+  just docker-compose-up mainnet
 
 [group("development")]
 info:

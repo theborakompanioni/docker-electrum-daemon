@@ -1,11 +1,12 @@
 services:
-  electrum:
+  electrum-regtest:
+    profiles: [regtest]
     build:
       context: .
       args:
         - ELECTRUM_VERSION=${ELECTRUM_VERSION}
         - ELECTRUM_CHECKSUM_SHA512=${ELECTRUM_CHECKSUM_SHA512}
-    container_name: electrum
+    container_name: electrum-regtest
     ports:
       - 127.0.0.1:7000:17000
     environment:
@@ -15,12 +16,46 @@ services:
       - ELECTRUM_RPCPASSWORD=changeme
       - ELECTRUM_RPCPORT=17000
       - ELECTRUM_CONFIG_ONESERVER=true
-      - ELECTRUM_CONFIG_SERVER=127.0.0.1:50002:t
+      - ELECTRUM_CONFIG_SERVER=127.0.0.1:50002:s
       - ELECTRUM_CONFIG_AUTO_CONNECT=false # must be disabled if "oneserver" := true
       - ELECTRUM_CONFIG_CONFIRMED_ONLY=false
     volumes:
       - ./.data:/home/electrum/.electrum:z
     healthcheck:
       test: [ "CMD", "electrum", "--regtest", "getinfo" ]
+      interval: 3s
+      retries: 20
+
+
+  electrum-mainnet:
+    profiles: [mainnet]
+    build:
+      context: .
+      args:
+        - ELECTRUM_VERSION=${ELECTRUM_VERSION}
+        - ELECTRUM_CHECKSUM_SHA512=${ELECTRUM_CHECKSUM_SHA512}
+    container_name: electrum-mainnet
+    ports:
+      - 127.0.0.1:7000:17001
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - DRY_RUN=${DRY_RUN:-false}
+      - ELECTRUM_NETWORK=mainnet
+      - ELECTRUM_RPCUSER=electrum
+      - ELECTRUM_RPCPASSWORD=changeme
+      - ELECTRUM_RPCPORT=17001
+      - ELECTRUM_CONFIG_ONESERVER=true
+      - ELECTRUM_CONFIG_SERVER=blockstream.info:700:s # yes, the port is really 700 (not 7000)
+      #- ELECTRUM_CONFIG_SERVER=electrum.blockstream.info:50002:s # disconnects after a few seconds
+      #- ELECTRUM_CONFIG_SERVER=electrum.acinq.co:50002:s
+      - ELECTRUM_CONFIG_AUTO_CONNECT=false # must be disabled if "oneserver" := true
+      - ELECTRUM_CONFIG_CONFIRMED_ONLY=false
+      #- ELECTRUM_CONFIG_PROXY=socks5:host.docker.internal:9050
+      - ELECTRUM_CONFIG_PROXY=none
+    volumes:
+      - ./.data:/home/electrum/.electrum:z
+    healthcheck:
+      test: [ "CMD", "electrum", "--mainnet", "getinfo" ]
       interval: 3s
       retries: 20
