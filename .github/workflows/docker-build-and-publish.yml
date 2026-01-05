@@ -64,7 +64,7 @@ jobs:
 
       - name: Build and push
         id: push
-        uses: docker/build-push-action@v6.13.0
+        uses: docker/build-push-action@v6.18.0
         env:
           SOURCE_DATE_EPOCH: 0
         with:
