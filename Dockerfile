@@ -8,7 +8,7 @@ RUN wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_V
     && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
     && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
 
-FROM python:3.14.3-alpine3.22@sha256:b0d9cd5ed77285b2563c86ca10b53578249ca1a08d14e5b69b7970884a9fb539 AS builder
+FROM python:3.14.4-alpine3.22@sha256:a0ab57738657f3c019ea37e7b70ba84176efeb61a0438bbaec8d0606213e95a5 AS builder
 
 ARG BUILD_DATE
 ARG VCS_REF
