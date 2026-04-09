@@ -83,6 +83,26 @@ docker-compose-up-dry-run profile='regtest':
   DRY_RUN=true just docker-compose-up {{profile}}
 
 [group("docker")]
+docker-compose-exec profile='regtest' *args='help':
+  @docker compose exec electrum-{{profile}} electrum --{{profile}} {{args}}
+
+[group("docker")]
+docker-compose-exec-getinfo profile='regtest':
+  @just docker-compose-exec {{profile}} getinfo
+
+[group("docker")]
+docker-compose-exec-makeseed profile='regtest':
+  @just docker-compose-exec {{profile}} make_seed
+
+[group("docker")]
+docker-compose-exec-createwallet profile='regtest':
+  @just docker-compose-exec {{profile}} create -w wallet-{{datetime_utc('%F-%s')}}
+
+[group("docker")]
+docker-compose-run-shell profile='regtest':
+  @docker compose exec -it electrum-{{profile}} ash
+
+[group("docker")]
 docker-compose-up-mainnet:
   just docker-compose-up mainnet
 
