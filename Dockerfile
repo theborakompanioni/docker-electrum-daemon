@@ -1,12 +1,25 @@
 FROM alpine:3.23.3@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659 AS base
 ARG ELECTRUM_VERSION
 ARG ELECTRUM_CHECKSUM_SHA512
+ARG ELECTRUM_GPG_VERIFY
 
-RUN apk --no-cache add --update ca-certificates openssl wget && update-ca-certificates
+RUN apk --no-cache add --update ca-certificates openssl wget gnupg && update-ca-certificates
 
 RUN wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz \
     && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
     && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
+
+COPY contrib/pubkeys/*.asc /tmp/pubkeys/
+
+RUN if [ "${ELECTRUM_GPG_VERIFY}" = "false" ]; then \
+      echo "GPG signature verification skipped (ELECTRUM_GPG_VERIFY=false)"; \
+    else \
+      find /tmp/pubkeys -iname '*.asc' -exec gpg --import "{}" \; \
+      && wget https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz.asc \
+      && gpg --verify Electrum-${ELECTRUM_VERSION}.tar.gz.asc Electrum-${ELECTRUM_VERSION}.tar.gz \
+      && echo -e "**************************\n GPG Signature OK\n**************************" \
+      && rm -rf Electrum-${ELECTRUM_VERSION}.tar.gz.asc /tmp/pubkeys/; \
+    fi
 
 FROM python:3.14.4-alpine3.22@sha256:5d0eba24627ddd23e126c8f73dea79c3e147013bf08ccd86b5c3c6587fe5e8b2 AS builder
 

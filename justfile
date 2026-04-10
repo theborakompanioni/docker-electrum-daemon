@@ -8,6 +8,8 @@ set dotenv-required
 project_dir := justfile_directory()
 git_commit := `git rev-parse --short HEAD`
 docker_tag := "${ELECTRUM_VERSION}"
+gpg_keys_dir := project_dir / "contrib" / "pubkeys"
+gpg_keys_base_url := "https://raw.githubusercontent.com/spesmilo/electrum/master/pubkeys"
 
 # print available targetgit_commits
 [group("project-agnostic")]
@@ -30,18 +32,20 @@ system-info:
 # create a docker image (no cache)
 [group("docker")]
 docker-build-no-cache:
-  @just build `date -u +"%Y-%m-%dT%H:%M:%SZ"`
+  @just build `date -u +"%Y-%m-%dT%H:%M:%SZ"` --no-cache
 
 alias build := docker-build
 
 # create a docker image
 [group("docker")]
-docker-build build_date='1970-01-01T00:00:00Z':
+docker-build build_date='1970-01-01T00:00:00Z' *args='':
   @docker build \
     --build-arg BUILD_DATE={{build_date}} \
     --build-arg ELECTRUM_VERSION=${ELECTRUM_VERSION} \
     --build-arg ELECTRUM_CHECKSUM_SHA512=${ELECTRUM_CHECKSUM_SHA512} \
+    --build-arg ELECTRUM_GPG_VERIFY=${ELECTRUM_GPG_VERIFY:-false} \
     --build-arg VCS_REF="{{git_commit}}" \
+    {{args}} \
     --tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" .
 
 # size of the docker image
@@ -110,3 +114,18 @@ docker-compose-up-mainnet:
 info:
   @echo "Docker Image: ${DOCKER_IMAGE_NAME}:{{docker_tag}}"
   @echo "Electrum Version: ${ELECTRUM_VERSION}"
+
+# update GPG public keys of all Electrum maintainers
+[group("development")]
+gpg-update-keys:
+  @echo "Updating GPG keys in {{gpg_keys_dir}} ..."
+  @mkdir -p "{{gpg_keys_dir}}"
+  @curl -fsSL "https://api.github.com/repos/spesmilo/electrum/contents/pubkeys" \
+    | grep -oP '"name"\s*:\s*"\K[^"]+\.asc' \
+    | while read -r key; do \
+        echo "Downloading $key ..."; \
+        curl -fsSL "{{gpg_keys_base_url}}/$key" -o "{{gpg_keys_dir}}/$key"; \
+      done
+  @echo "Keys updated:"
+  @gpg --show-keys "{{gpg_keys_dir}}"/*.asc 2>&1 | grep -E '^(pub|uid)'
+
