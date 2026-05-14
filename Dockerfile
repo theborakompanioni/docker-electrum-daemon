@@ -21,7 +21,7 @@ RUN if [ "${ELECTRUM_GPG_VERIFY}" = "false" ]; then \
       && rm -rf Electrum-${ELECTRUM_VERSION}.tar.gz.asc /tmp/pubkeys/; \
     fi
 
-FROM python:3.14.4-alpine3.22@sha256:5d0eba24627ddd23e126c8f73dea79c3e147013bf08ccd86b5c3c6587fe5e8b2 AS builder
+FROM python:3.14.5-alpine3.22@sha256:6b91e66ab2a880ce9ca5a1b91c70f45963ff71ff68268df056336e1a657d5efd AS builder
 
 ARG BUILD_DATE
 ARG VCS_REF
