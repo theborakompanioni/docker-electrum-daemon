@@ -25,6 +25,7 @@ jobs:
           sparse-checkout: |
             .env
           sparse-checkout-cone-mode: false
+          persist-credentials: false
 
       - name: Read .env file
         id: dotenv
