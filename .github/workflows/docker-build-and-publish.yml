@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+        with:
+          sparse-checkout: |
+            .env
+          sparse-checkout-cone-mode: false
 
       - name: Read .env file
         id: dotenv
