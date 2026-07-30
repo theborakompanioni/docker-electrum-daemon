@@ -129,18 +129,18 @@ gpg-update-keys:
   @echo "Keys updated:"
   @gpg --show-keys "{{gpg_keys_dir}}"/*.asc 2>&1 | grep -E '^(pub|uid)'
 
-# verify Electrum release hash
+# verify lectrum release hash
 [group("development")]
 electrum-binary-verify-hash version=env('ELECTRUM_VERSION') sha512_hash=env('ELECTRUM_CHECKSUM_SHA512'):
   @[ "{{sha512_hash}}  Electrum-{{version}}.tar.gz" = "$(sha512sum Electrum-{{version}}.tar.gz)" ] \
     && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
 
-# verify Electrum release hash
+# download Electrum release
 [group("development")]
 electrum-binary-download version=env('ELECTRUM_VERSION'):
   wget "https://download.electrum.org/{{version}}/Electrum-{{version}}.tar.gz"
 
-# verify Electrum release hash
+# download and verify Electrum release
 [group("development")]
 electrum-binary-download-and-verify version=env('ELECTRUM_VERSION') sha512_hash=env('ELECTRUM_CHECKSUM_SHA512'):
   @just electrum-binary-download {{version}} \
