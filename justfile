@@ -14,12 +14,12 @@ gpg_keys_base_url := "https://raw.githubusercontent.com/spesmilo/electrum/master
 # print available targetgit_commits
 [group("project-agnostic")]
 default:
-    @just --list --justfile {{justfile()}}
+  @just --list --justfile {{justfile()}}
 
 # evaluate and print all just variables
 [group("project-agnostic")]
 evaluate:
-    @just --evaluate
+  @just --evaluate
 
 # print system information such as OS and architecture
 [group("project-agnostic")]
@@ -55,7 +55,7 @@ docker-lint:
 # size of the docker image
 [group("docker")]
 docker-image-size:
-    @docker images "$DOCKER_IMAGE_NAME"
+  @docker images "$DOCKER_IMAGE_NAME"
 
 [group("docker")]
 docker-tag:
@@ -63,36 +63,29 @@ docker-tag:
 
 # run the docker image
 [group("docker")]
-docker-run:
-    @echo "Running container from docker image ..."
-    @docker run \
-      --rm \
-      --name electrum-daemon \
-      --publish "${ELECTRUM_RPCPORT}:${ELECTRUM_RPCPORT}" \
-      --env ELECTRUM_NETWORK=${ELECTRUM_NETWORK} \
-      --env ELECTRUM_RPCPORT=${ELECTRUM_RPCPORT} \
-      "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
+docker-run network=env('ELECTRUM_NETWORK'):
+  @echo "Running container from docker image with network '{{network}}'..."
+  @docker run \
+    --rm \
+    --name electrum-daemon \
+    --publish "127.0.0.1:${ELECTRUM_RPCPORT}:${ELECTRUM_RPCPORT}" \
+    --env ELECTRUM_NETWORK={{network}} \
+    --env ELECTRUM_RPCPORT=${ELECTRUM_RPCPORT} \
+    "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
 
 # run the docker image against mainnet
 [group("docker")]
 docker-run-mainnet:
-    @echo "Running container from docker image ..."
-    @docker run \
-      --rm \
-      --name electrum-daemon \
-      --publish "${ELECTRUM_RPCPORT}:${ELECTRUM_RPCPORT}" \
-      --env ELECTRUM_NETWORK=mainnet \
-      --env ELECTRUM_RPCPORT=${ELECTRUM_RPCPORT} \
-      "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
+  @just docker-run mainnet
 
 # run the docker image and start shell
 [group("docker")]
 docker-run-shell:
-    @echo "Running container from docker image with shell..."
-    @docker run \
-      --rm \
-      --entrypoint="/bin/ash" \
-      -it "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
+  @echo "Running container from docker image with shell..."
+  @docker run \
+    --rm \
+    --entrypoint="/bin/ash" \
+    -it "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
 
 [group("docker")]
 docker-compose-up profile='regtest' *args='':
