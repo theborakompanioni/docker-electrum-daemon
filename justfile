@@ -48,6 +48,10 @@ docker-build build_date='1970-01-01T00:00:00Z' *args='':
     {{args}} \
     --tag "${DOCKER_IMAGE_NAME}:{{docker_tag}}" .
 
+[group("docker")]
+docker-lint:
+  @docker run --rm -i hadolint/hadolint:latest-alpine hadolint "$@" - < "./Dockerfile"
+
 # size of the docker image
 [group("docker")]
 docker-image-size:
