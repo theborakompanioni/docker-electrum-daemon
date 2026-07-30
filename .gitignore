@@ -2,3 +2,6 @@
 
 .data/*
 !.data/.gitkeep
+
+*.tar.gz
+*.tar.gz.*
