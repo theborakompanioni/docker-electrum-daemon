@@ -73,6 +73,18 @@ docker-run:
       --env ELECTRUM_RPCPORT=${ELECTRUM_RPCPORT} \
       "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
 
+# run the docker image against mainnet
+[group("docker")]
+docker-run-mainnet:
+    @echo "Running container from docker image ..."
+    @docker run \
+      --rm \
+      --name electrum-daemon \
+      --publish "${ELECTRUM_RPCPORT}:${ELECTRUM_RPCPORT}" \
+      --env ELECTRUM_NETWORK=mainnet \
+      --env ELECTRUM_RPCPORT=${ELECTRUM_RPCPORT} \
+      "${DOCKER_IMAGE_NAME}:{{docker_tag}}"
+
 # run the docker image and start shell
 [group("docker")]
 docker-run-shell:
