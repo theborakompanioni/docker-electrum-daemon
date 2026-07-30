@@ -149,12 +149,16 @@ gpg-update-keys:
 [group("development")]
 electrum-binary-verify-hash version=env('ELECTRUM_VERSION') sha512_hash=env('ELECTRUM_CHECKSUM_SHA512'):
   @[ "{{sha512_hash}}  Electrum-{{version}}.tar.gz" = "$(sha512sum Electrum-{{version}}.tar.gz)" ] \
-    && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
+    && echo "************************** SHA 512 Checksum OK **************************"
 
 # download Electrum release
 [group("development")]
 electrum-binary-download version=env('ELECTRUM_VERSION'):
-  wget "https://download.electrum.org/{{version}}/Electrum-{{version}}.tar.gz"
+  @if [ -e "Electrum-{{version}}.tar.gz" ]; then \
+    echo "File Electrum-{{version}}.tar.gz already exists"; \
+  else \
+    wget "https://download.electrum.org/{{version}}/Electrum-{{version}}.tar.gz"; \
+  fi
 
 # download and verify Electrum release
 [group("development")]

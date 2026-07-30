@@ -5,9 +5,9 @@ ARG ELECTRUM_GPG_VERIFY
 
 RUN apk --no-cache add --update ca-certificates openssl wget gnupg && update-ca-certificates
 
-RUN wget "https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz" \
+RUN wget --progress=dot:giga "https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz" \
     && [ "${ELECTRUM_CHECKSUM_SHA512}  Electrum-${ELECTRUM_VERSION}.tar.gz" = "$(sha512sum Electrum-${ELECTRUM_VERSION}.tar.gz)" ] \
-    && echo -e "**************************\n SHA 512 Checksum OK\n**************************"
+    && echo "************************** SHA 512 Checksum OK **************************"
 
 COPY contrib/pubkeys/*.asc /tmp/pubkeys/
 
@@ -15,9 +15,9 @@ RUN if [ "${ELECTRUM_GPG_VERIFY}" = "false" ]; then \
       echo "GPG signature verification skipped (ELECTRUM_GPG_VERIFY=false)"; \
     else \
       find /tmp/pubkeys -iname '*.asc' -exec gpg --import "{}" \; \
-      && wget "https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz.asc" \
+      && wget --progress=dot:giga "https://download.electrum.org/${ELECTRUM_VERSION}/Electrum-${ELECTRUM_VERSION}.tar.gz.asc" \
       && gpg --verify "Electrum-${ELECTRUM_VERSION}.tar.gz.asc" "Electrum-${ELECTRUM_VERSION}.tar.gz" \
-      && echo -e "**************************\n GPG Signature OK\n**************************" \
+      && echo "************************** GPG Signature OK **************************" \
       && rm -rf "Electrum-${ELECTRUM_VERSION}.tar.gz.asc" /tmp/pubkeys/; \
     fi
 
@@ -56,13 +56,13 @@ ENV ELECTRUM_CONFIG_DONT_SHOW_TESTNET_WARNING=true
 RUN addgroup --gid 1000 -S electrum && \
     adduser --uid 1000 -D -S electrum -G electrum
 
-COPY --from=base Electrum-${ELECTRUM_VERSION}.tar.gz /home/electrum
+COPY --from=base "Electrum-${ELECTRUM_VERSION}.tar.gz" /home/electrum
 
 RUN apk --no-cache add --virtual runtime-dependencies libsecp256k1 libsecp256k1-dev \
   && apk --no-cache add --virtual build-dependencies gcc musl-dev python3-dev libffi-dev libressl-dev cargo pkgconfig \
-  && chown electrum:electrum /home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz \
-  && ELECTRUM_ECC_DONT_COMPILE=1 pip3 install cryptography==44.0.1 /home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz \
-  && rm -f /home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz \
+  && chown electrum:electrum "/home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz" \
+  && ELECTRUM_ECC_DONT_COMPILE=1 pip3 install --no-cache-dir cryptography==44.0.1 "/home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz" \
+  && rm -f "/home/electrum/Electrum-${ELECTRUM_VERSION}.tar.gz" \
   && apk del build-dependencies
 
 RUN mkdir -p /home/electrum/.electrum/wallets/ \
