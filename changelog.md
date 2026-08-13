@@ -6,7 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.8.1] - 2027-08-13
 ### Changed
+- Update python to v3.14.7
 - Update electrum to v4.8.1
 
 ## [4.8.0] - 2027-07-30
@@ -56,7 +58,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Forked from [osminogin/docker-electrum-daemon@cd7e30e4](https://github.com/osminogin/docker-electrum-daemon/commit/cd7e30e402f48984e0271d34d2d552a3d3989c9d).
 
 
-[Unreleased]: https://github.com/theborakompanioni/docker-electrum-daemon/compare/4.8.0...HEAD
+[Unreleased]: https://github.com/theborakompanioni/docker-electrum-daemon/compare/4.8.1...HEAD
+[4.8.1]: https://github.com/theborakompanioni/docker-electrum-daemon/releases/tag/4.8.0...4.8.1
 [4.8.0]: https://github.com/theborakompanioni/docker-electrum-daemon/releases/tag/4.7.2...4.8.0
 [4.7.2]: https://github.com/theborakompanioni/docker-electrum-daemon/releases/tag/4.6.2...4.7.2
 [4.6.2]: https://github.com/theborakompanioni/docker-electrum-daemon/releases/tag/4.6.1...4.6.2
