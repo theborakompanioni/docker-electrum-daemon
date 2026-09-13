@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Update electrum to v4.8.2
+
 ## [4.8.1] - 2027-08-13
 ### Changed
 - Update python to v3.14.7
